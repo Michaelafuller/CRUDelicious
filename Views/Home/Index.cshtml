@@ -15,7 +15,7 @@
     <ul>
         @foreach (var dish in Model)
         {
-            <li>@dish.Name by @dish.Chef</li>
+            <li><a href="/dish/@dish.DishId">@dish.Name</a> by @dish.Chef</li>
         }
     </ul>
 </div>

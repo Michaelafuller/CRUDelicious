@@ -2,7 +2,7 @@
 
 <h1 class="text-center">Add a New Dish!</h1>
 <a href="/">Home</a>
-<form asp-action="Create" asp-controller="Home" method="post">
+<form asp-action="Edit" asp-controller="Home" method="post" asp-route-dishId="@Model.DishId">
 
     <span asp-validation-for="Chef"></span>
     <label asp-for="Chef"></label>

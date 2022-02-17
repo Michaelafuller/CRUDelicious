@@ -11,7 +11,7 @@ namespace CRUDelicious.Controllers
 {
     public class HomeController : Controller
     {
-        private readonly ILogger<HomeController> _logger;
+        // private readonly ILogger<HomeController> _logger;
 
         private CRUDeliciousContext db;
         public HomeController(CRUDeliciousContext context)
@@ -42,12 +42,79 @@ namespace CRUDelicious.Controllers
             {
                 db.Add(newDish);
                 db.SaveChanges();
-                return RedirectToAction("");
+                return RedirectToAction("Index");
             }
             return View("New");
         }
 
-        
+        [HttpGet("/dish/{dishId}")]
+        public IActionResult GetDish(int dishId)
+        {
+            Dish RetrievedDish = db.Dishes
+                .FirstOrDefault(d => d.DishId == dishId);
+
+            if (RetrievedDish == null)
+            {
+                return RedirectToAction("Index");
+            }
+
+            return View("Dish", RetrievedDish);
+        }
+
+        [HttpGet("/dish/{dishId}/update")]
+        public IActionResult UpdateDish(int dishId)
+        {
+            Dish RetrievedDish = db.Dishes
+                .FirstOrDefault(d => d.DishId == dishId);
+
+            if (RetrievedDish == null)
+            {
+                return RedirectToAction("Index");
+            }
+            return View("Edit", RetrievedDish);
+        }
+
+        [HttpPost("/dish/{dishId}/edit")]
+        public IActionResult Edit(Dish editedDish, int dishId)
+        {
+            Dish RetrievedDish = db.Dishes
+                .FirstOrDefault(d => d.DishId == dishId);
+
+            if (RetrievedDish != null)
+            {
+                if (ModelState.IsValid)
+                {
+                    RetrievedDish.Name = editedDish.Name;
+                    RetrievedDish.Chef = editedDish.Chef;
+                    RetrievedDish.Calories = editedDish.Calories;
+                    RetrievedDish.Tastiness = editedDish.Tastiness;
+                    RetrievedDish.Description = editedDish.Description;
+                    RetrievedDish.UpdatedAt = DateTime.Now;
+                    db.SaveChanges();
+                    return View("Dish", editedDish);
+                }
+                return View("Edit", RetrievedDish);
+            }
+            return View("Index");
+
+        }
+
+        [HttpPost("/dish/{dishId}/delete")]
+        public IActionResult Delete(int dishId)
+        {
+            Dish RetrievedDish = db.Dishes
+                .FirstOrDefault(d => d.DishId == dishId);
+            
+            if(RetrievedDish != null)
+            {
+                db.Dishes.Remove(RetrievedDish);
+                db.SaveChanges();
+                return RedirectToAction("Index");
+            }
+            return View("Index");
+
+        }
+
         public IActionResult Privacy()
         {
             return View();
